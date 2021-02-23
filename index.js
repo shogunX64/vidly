@@ -15,6 +15,9 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 
+app.set('view engine', 'pug');
+app.set('views', './views');
+
 app.use(express.json());
 app.use(express.static('public'));
 app.use(logger);
@@ -41,6 +44,9 @@ const genres = [
   ];
 
 
+app.get('/', (req, res) =>{
+    res.render('index', {title: 'my express app', message:' hello world!!!'})
+});
 
 // @desc    Get all genres
 // @route   GET /api/genres/
@@ -48,7 +54,6 @@ const genres = [
 app.get('/api/genres', (req, res) =>{
     //return all genres
     res.send(genres);
-    
 })
 
 
@@ -80,6 +85,7 @@ app.post('/api/genres', (req, res) => {
     //add genre to array and return response
     genres.push(genre);
     res.send(genre);
+    
 })
 
 
