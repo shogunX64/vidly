@@ -1,17 +1,43 @@
+// ACCESS PASSWORDS SHOULD NOT STORED IN BLANK.
+// ENVIRONMENT VALUES SHOULD BE USED. See Express Advanced Topics - Configuration min 6:15
+
 let express = require('express');
 const Joi = require('joi');
-
 const app = express();
-app.use(express.json());
+const config = require('config');
+const morgan = require('morgan');
+const startupDebugger = require('debug')('app:startup');
+const dbDebugger = require('debug')('app:db');
+const logger = require('./logger');
+const auth = require('./auth');
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`listening on port ${port}`));
+app.listen(port, () => console.log(`Listening on port ${port}`));
+
+
+app.use(express.json());
+app.use(express.static('public'));
+app.use(logger);
+app.use(auth);
+
+
+//configuration
+console.log('Application Name: ' + config.get('name'));
+console.log('Mail Server: ' + config.get('mail.host'));
+
+
+if(app.get('env') === 'development'){
+    app.use(morgan('tiny'));
+    startupDebugger('Morgan enabled');
+}
+// db work.
+dbDebugger('Connected to the database...');
 
 
 const genres = [
     { id: 1, name: 'Action' },  
     { id: 2, name: 'Horror' },  
-    { id: 3, name: 'Romance' },  
+    { id: 3, name: 'Romance'},  
   ];
 
 
@@ -96,4 +122,4 @@ function validateGenre(genre){
 }
 
 
-//more comming
+
