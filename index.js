@@ -4,37 +4,13 @@
 let express = require('express');
 const Joi = require('joi');
 const app = express();
-const config = require('config');
-const morgan = require('morgan');
-const startupDebugger = require('debug')('app:startup');
-const dbDebugger = require('debug')('app:db');
-const logger = require('./logger');
-const auth = require('./auth');
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 
-app.set('view engine', 'pug');
-app.set('views', './views');
-
 app.use(express.json());
-app.use(express.static('public'));
-app.use(logger);
-app.use(auth);
-
-
-//configuration
-console.log('Application Name: ' + config.get('name'));
-console.log('Mail Server: ' + config.get('mail.host'));
-
-
-if(app.get('env') === 'development'){
-    app.use(morgan('tiny'));
-    startupDebugger('Morgan enabled');
-}
-// db work.
-dbDebugger('Connected to the database...');
 
 
 const genres = [
@@ -44,9 +20,6 @@ const genres = [
   ];
 
 
-app.get('/', (req, res) =>{
-    res.render('index', {title: 'my express app', message:' hello world!!!'})
-});
 
 // @desc    Get all genres
 // @route   GET /api/genres/
@@ -84,8 +57,7 @@ app.post('/api/genres', (req, res) => {
 
     //add genre to array and return response
     genres.push(genre);
-    res.send(genre);
-    
+    res.send(genre);    
 })
 
 
